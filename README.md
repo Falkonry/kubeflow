@@ -1,5 +1,11 @@
 # Kubeflow Manifests
 
+## Falkonry Notes
+This is a fork of the upstream Kubeflow repository's manifest folder. It contains customizations and modifications specific to deployment into K3S bare metal installation environment.
+
+### Imported Dependencies
+* The `kustomize` binary should be copied to the control plane node where the `kubectl` installation will be run.  i.e. copy or symlink the binary to `/usr/bin/kustomize` or `/usr/local/bin/kustomize`
+
 ## Table of Contents
 
 <!-- toc -->
