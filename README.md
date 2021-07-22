@@ -6,6 +6,30 @@ This is a fork of the upstream Kubeflow repository's manifest folder. It contain
 ### Imported Dependencies
 * The `kustomize` binary should be copied to the control plane node where the `kubectl` installation will be run.  i.e. copy or symlink the binary to `/usr/bin/kustomize` or `/usr/local/bin/kustomize`
 
+### Networking, Ingress, & TLS Termination
+* The standard nginx-controller manifests can be used.  An example template for controller and ingress can be found in the `common/nginx` path
+* For TLS, create the certificate and key pair secret in the environment to enable HTTPS (e.g. `falkonry-tls` as defined in the example controller into the same namespace as the nginx ingress and istio gateway resources).  A secret template is provided.  Adjust any other nginx annotations as needed for your environment.
+
+### External IdP Authentication
+Alternative to the static local user credential scheme, you can use Github (or other IdP service) as your SSO identity provider.  Configure the desired service overlay using one of the templates, e.g. `common/dex/overlays/github`.  You can craft the config file manually and deploy/update the config resource, or use `kustomize`.
+
+Your IT/Ops/DevOps team can provide the values needed for the OAuth application configurations.
+
+```
+kustomize build common/dex/overlays/github | kubectl apply -f -
+
+```
+
+The auth service config object needs to be patched if params weren't modified during original install.  You can just update the configmap:
+```
+kubectl edit cm -n istio-system                oidc-authservice-parameters
+```
+and update the `OIDC_PROVIDER` value to match the external URL you are using.
+
+```
+  OIDC_PROVIDER: https://{{ YOUR DOMAIN }}/dex/
+```
+
 ## Table of Contents
 
 <!-- toc -->
